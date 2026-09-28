@@ -142,9 +142,45 @@
     .hero-dash{display:none;}
     section{padding:48px 0;}
   }
+
+  /* --- animaciones --- */
+  .has-js .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;}
+  .has-js .reveal.is-visible{opacity:1; transform:none;}
+
+  .card{transition:transform .2s ease, border-color .2s ease;}
+  .card:hover{transform:translateY(-4px); border-color:rgba(217,142,59,0.4);}
+  .card .dot{transition:background .2s ease, transform .2s ease;}
+  .card:hover .dot{background:rgba(217,142,59,0.28); transform:scale(1.08);}
+
+  .cases li{transition:transform .2s ease, border-color .2s ease;}
+  .cases li:hover{transform:translateX(4px); border-color:rgba(217,142,59,0.35);}
+
+  @keyframes nodePulse{ 0%,100%{opacity:0.22;} 50%{opacity:0.6;} }
+  .hero-net circle{animation:nodePulse 3.2s ease-in-out infinite;}
+
+  .chart-line{
+    stroke-dasharray:420; stroke-dashoffset:420;
+    animation:drawLine 1.6s ease forwards; animation-delay:.3s;
+  }
+  @keyframes drawLine{ to{ stroke-dashoffset:0; } }
+
+  .ring-fill{
+    stroke-dasharray:175.9; stroke-dashoffset:175.9;
+    animation:ringFill 1.6s ease forwards; animation-delay:.3s;
+  }
+  @keyframes ringFill{ to{ stroke-dashoffset:31.7; } }
+
+  @media (prefers-reduced-motion: reduce){
+    .has-js .reveal{opacity:1 !important; transform:none !important; transition:none !important;}
+    .hero-net circle{animation:none !important;}
+    .chart-line{animation:none !important; stroke-dashoffset:0 !important;}
+    .ring-fill{animation:none !important; stroke-dashoffset:31.7 !important;}
+    .card:hover, .cases li:hover{transform:none;}
+  }
 </style>
 </head>
 <body>
+<script>document.documentElement.classList.add('has-js');</script>
 
 <header>
   <div class="wrap">
@@ -181,10 +217,10 @@
       <line x1="870" y1="410" x2="950" y2="470"/>
     </g>
     <g fill="#D98E3B" opacity="0.28">
-      <circle cx="620" cy="70" r="4"/><circle cx="700" cy="130" r="4"/><circle cx="760" cy="80" r="4"/>
-      <circle cx="830" cy="170" r="4"/><circle cx="900" cy="110" r="4"/><circle cx="650" cy="250" r="4"/>
-      <circle cx="780" cy="290" r="4"/><circle cx="950" cy="250" r="4"/><circle cx="700" cy="370" r="4"/>
-      <circle cx="870" cy="410" r="4"/><circle cx="600" cy="440" r="4"/><circle cx="950" cy="470" r="4"/>
+      <circle cx="620" cy="70" r="4" style="animation-delay:0s"/><circle cx="700" cy="130" r="4" style="animation-delay:.3s"/><circle cx="760" cy="80" r="4" style="animation-delay:.6s"/>
+      <circle cx="830" cy="170" r="4" style="animation-delay:.9s"/><circle cx="900" cy="110" r="4" style="animation-delay:1.2s"/><circle cx="650" cy="250" r="4" style="animation-delay:1.5s"/>
+      <circle cx="780" cy="290" r="4" style="animation-delay:1.8s"/><circle cx="950" cy="250" r="4" style="animation-delay:2.1s"/><circle cx="700" cy="370" r="4" style="animation-delay:.15s"/>
+      <circle cx="870" cy="410" r="4" style="animation-delay:.45s"/><circle cx="600" cy="440" r="4" style="animation-delay:.75s"/><circle cx="950" cy="470" r="4" style="animation-delay:1.05s"/>
     </g>
   </svg>
   <div class="wrap">
@@ -204,7 +240,7 @@
       <circle cx="62" cy="34" r="4" fill="#F4EFE6" opacity="0.3"/>
       <rect x="200" y="28" width="150" height="10" rx="5" fill="#F4EFE6" opacity="0.15"/>
       <rect x="34" y="58" width="352" height="140" rx="10" fill="#16232B" opacity="0.55"/>
-      <polyline points="52,178 100,150 148,168 196,118 244,140 292,92 340,112" fill="none" stroke="#D98E3B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline class="chart-line" points="52,178 100,150 148,168 196,118 244,140 292,92 340,112" fill="none" stroke="#D98E3B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
       <g fill="#F0B462">
         <circle cx="52" cy="178" r="4"/><circle cx="100" cy="150" r="4"/><circle cx="148" cy="168" r="4"/>
         <circle cx="196" cy="118" r="4"/><circle cx="244" cy="140" r="4"/><circle cx="292" cy="92" r="4"/><circle cx="340" cy="112" r="4"/>
@@ -216,9 +252,9 @@
       <circle cx="52" cy="276" r="5" fill="#F0B462"/>
       <rect x="68" y="271" width="130" height="9" rx="4.5" fill="#F4EFE6" opacity="0.18"/>
       <circle cx="350" cy="250" r="28" fill="none" stroke="#F4EFE6" stroke-opacity="0.15" stroke-width="8"/>
-      <circle cx="350" cy="250" r="28" fill="none" stroke="#D98E3B" stroke-width="8" stroke-linecap="round"
-              stroke-dasharray="144 176" transform="rotate(-90 350 250)"/>
-      <text x="350" y="255" text-anchor="middle" font-family="DejaVu Sans" font-size="18" font-weight="bold" fill="#F4EFE6">82%</text>
+      <circle class="ring-fill" cx="350" cy="250" r="28" fill="none" stroke="#D98E3B" stroke-width="8" stroke-linecap="round"
+              transform="rotate(-90 350 250)"/>
+      <text id="statPercent" x="350" y="255" text-anchor="middle" font-family="DejaVu Sans" font-size="18" font-weight="bold" fill="#F4EFE6">0%</text>
     </svg>
   </div>
 </section>
@@ -228,56 +264,56 @@
     <h2>Servicios</h2>
     <p class="section-lead">Soluciones tecnológicas integrales para que tu pyme compita con la solidez de una gran empresa, sin el costo de un área de TI propia.</p>
     <div class="grid">
-      <div class="card">
+      <div class="card reveal" style="transition-delay:0ms">
         <div class="dot">
           <svg viewBox="0 0 24 24" width="20" height="20"><rect x="5" y="5" width="14" height="6" rx="1.5" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="8" cy="8" r="1" fill="#F0B462"/><rect x="5" y="13" width="14" height="6" rx="1.5" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="8" cy="16" r="1" fill="#F0B462"/></svg>
         </div>
         <h3>Soporte remoto de sistemas</h3>
         <p>Un equipo de TI experto siempre disponible. Resolvemos cualquier incidencia de tus servidores y sistemas sin que tengas que esperar una visita presencial.</p>
       </div>
-      <div class="card">
+      <div class="card reveal" style="transition-delay:70ms">
         <div class="dot">
           <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 10a12 12 0 0 1 16 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><path d="M7 13.5a7.5 7.5 0 0 1 10 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><path d="M10 17a3.5 3.5 0 0 1 4 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="19.3" r="1.1" fill="#F0B462"/></svg>
         </div>
         <h3>Redes y conectividad</h3>
         <p>Conexión estable y segura en toda tu empresa. Diseñamos e implementamos la red que tu operación necesita para no perder productividad nunca.</p>
       </div>
-      <div class="card">
+      <div class="card reveal" style="transition-delay:140ms">
         <div class="dot">
           <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 17a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.3 8 4.5 4.5 0 0 1 16 17H7Z" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linejoin="round"/><path d="M12.2 10.3l-.6 1.7 1.7-.2-1.9 2.6.5-1.7-1.6.2 1.9-2.6Z" fill="#F0B462"/></svg>
         </div>
         <h3>Microsoft 365 y Copilot</h3>
         <p>Lleva la productividad de tu equipo al siguiente nivel con Microsoft 365, gestionado de forma segura y potenciado con inteligencia artificial.</p>
       </div>
-      <div class="card">
+      <div class="card reveal" style="transition-delay:210ms">
         <div class="dot">
           <svg viewBox="0 0 24 24" width="20" height="20"><polyline points="3,13 8,13 10,7 14,18 16,13 21,13" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <h3>Monitoreo 24/7</h3>
         <p>Vigilancia constante de tu infraestructura para anticipar problemas antes de que impacten tu operación.</p>
       </div>
-      <div class="card">
+      <div class="card reveal" style="transition-delay:280ms">
         <div class="dot">
           <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="8" width="13" height="9" rx="2" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="9.5" cy="12.5" r="2.3" fill="none" stroke="#F0B462" stroke-width="1.6"/><path d="M16 11.5l5-2.5v8l-5-2.5" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linejoin="round"/></svg>
         </div>
         <h3>Videovigilancia inteligente</h3>
         <p>Protege tus instalaciones con sistemas de videovigilancia profesionales, instalados y configurados de principio a fin.</p>
       </div>
-      <div class="card">
+      <div class="card reveal" style="transition-delay:350ms">
         <div class="dot">
           <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" fill="#F0B462"/><circle cx="19" cy="17" r="1.6" fill="#F0B462"/></svg>
         </div>
         <h3>Inteligencia artificial aplicada</h3>
         <p>¿Trabajo manual que se repite todos los días, o un problema que no sabes cómo resolver? Te ayudamos a automatizarlo y resolverlo con IA: Copilot, Claude, ChatGPT, Gemini y más, aplicados a lo que tu negocio realmente necesita.</p>
       </div>
-      <div class="card">
+      <div class="card reveal" style="transition-delay:420ms">
         <div class="dot">
           <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3a6 6 0 0 1 6 6c0 4-2 6-2 9" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-6 6c0 5 3 6 3 10" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M9 9a3 3 0 0 1 6 0c0 4 1.5 5 1.5 8.5" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M12 9v3.5c0 3 1.3 4 1.3 6.5" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <h3>Control de acceso biométrico</h3>
         <p>Instalación y configuración de sistemas biométricos de control de acceso, con el mismo respaldo técnico que el resto de nuestros servicios.</p>
       </div>
-      <div class="card">
+      <div class="card reveal" style="transition-delay:490ms">
         <div class="dot">
           <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="9" fill="none" stroke="#F0B462" stroke-width="1.6"/><ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="#F0B462" stroke-width="1.6"/><path d="M3 12h18M4.5 7.5h15M4.5 16.5h15" stroke="#F0B462" stroke-width="1.6"/></svg>
         </div>
@@ -293,23 +329,23 @@
     <h2>Experiencia</h2>
     <p class="section-lead">Más de una década resolviendo los desafíos tecnológicos más exigentes. Estos son algunos de los resultados que hemos entregado:</p>
     <ul class="cases">
-      <li>
+      <li class="reveal" style="transition-delay:0ms">
         <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="none" stroke="#D98E3B" stroke-width="2"/><path d="M6 10l3 3 5-6" fill="none" stroke="#F0B462" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <p><strong>Continuidad del negocio garantizada:</strong> optimizamos el acceso al almacenamiento corporativo, asegurando que la información crítica esté siempre disponible y protegida.</p>
       </li>
-      <li>
+      <li class="reveal" style="transition-delay:90ms">
         <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="none" stroke="#D98E3B" stroke-width="2"/><path d="M6 10l3 3 5-6" fill="none" stroke="#F0B462" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <p><strong>Seguridad a gran escala:</strong> puesta a punto de sistemas de videovigilancia IP con decenas de cámaras, garantizando registros precisos para auditoría y control.</p>
       </li>
-      <li>
+      <li class="reveal" style="transition-delay:180ms">
         <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="none" stroke="#D98E3B" stroke-width="2"/><path d="M6 10l3 3 5-6" fill="none" stroke="#F0B462" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <p><strong>Modernización sin riesgos:</strong> estrategias de migración de infraestructura crítica hacia plataformas más modernas, sin pérdida de datos ni tiempo de inactividad.</p>
       </li>
-      <li>
+      <li class="reveal" style="transition-delay:270ms">
         <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="none" stroke="#D98E3B" stroke-width="2"/><path d="M6 10l3 3 5-6" fill="none" stroke="#F0B462" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <p><strong>Redes a la medida de grandes operaciones:</strong> gestión centralizada de decenas de subredes corporativas, con control total y visibilidad en tiempo real.</p>
       </li>
-      <li>
+      <li class="reveal" style="transition-delay:360ms">
         <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="none" stroke="#D98E3B" stroke-width="2"/><path d="M6 10l3 3 5-6" fill="none" stroke="#F0B462" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <p><strong>Transformación digital con IA:</strong> implementación de Microsoft 365 y Copilot para una empresa del sector servicios, elevando su productividad con inteligencia artificial.</p>
       </li>
@@ -349,6 +385,37 @@
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Z" stroke="#16232B" stroke-width="1.6"/><path d="M8.5 8.7c.2-.5.4-.5.7-.5h.5c.2 0 .4 0 .6.4.2.5.7 1.6.7 1.7.1.1.1.3 0 .4-.1.2-.2.3-.3.4l-.4.5c-.1.2-.3.3-.1.6.2.3.8 1.2 1.7 2 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1.2-.2.7-.8.9-1 .2-.3.4-.2.6-.1l1.5.7c.2.1.4.2.4.3.1.5.1 1-.1 1.5-.2.5-1.1 1-1.9 1.1-.7.1-1.2.1-3.9-1.6-2.7-1.7-4.4-4.9-4.5-5.1-.1-.2-.9-1.2-.9-2.3 0-1.1.6-1.6.8-1.8Z" fill="#16232B"/></svg>
 </a>
 
-<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+document.addEventListener('DOMContentLoaded', function(){
+  var els = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.15});
+    els.forEach(function(el){ obs.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add('is-visible'); });
+  }
+
+  var statEl = document.getElementById('statPercent');
+  if(statEl){
+    var target = 82, start = null;
+    function step(ts){
+      if(!start) start = ts;
+      var progress = Math.min((ts - start) / 1400, 1);
+      statEl.textContent = Math.round(progress * target) + '%';
+      if(progress < 1) requestAnimationFrame(step);
+    }
+    setTimeout(function(){ requestAnimationFrame(step); }, 300);
+  }
+});
+</script>
 </body>
 </html>
