@@ -44,6 +44,14 @@
   .brand small{display:block; font-weight:400; font-size:0.62em; color:var(--amber-light); letter-spacing:0.03em;}
   nav a{margin-left:22px; text-decoration:none; color:var(--muted); font-size:0.95rem;}
   nav a:hover{color:var(--amber-light);}
+  .brand svg{filter:drop-shadow(0 0 6px rgba(217,142,59,0.55));}
+
+  .mono{font-family:ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;}
+  .terminal-line{
+    color:var(--amber-light); font-size:0.92rem; margin:0 0 16px; min-height:1.3em; letter-spacing:0.01em;
+  }
+  .cursor{display:inline-block; animation:blink 1s step-start infinite;}
+  @keyframes blink{50%{opacity:0;}}
 
   .hero{
     position:relative;
@@ -53,10 +61,43 @@
       radial-gradient(circle at 12% -10%, rgba(217,142,59,0.16), transparent 45%),
       linear-gradient(135deg, #1B2E38, #141F26);
   }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0; z-index:0;
+    background-image:
+      linear-gradient(rgba(217,142,59,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(217,142,59,0.08) 1px, transparent 1px);
+    background-size:42px 42px;
+    -webkit-mask-image:radial-gradient(ellipse 75% 65% at 25% 25%, #000 35%, transparent 85%);
+    mask-image:radial-gradient(ellipse 75% 65% at 25% 25%, #000 35%, transparent 85%);
+    pointer-events:none;
+  }
+  .scanline{
+    position:absolute; left:0; right:0; top:-5%; height:2px; z-index:1;
+    background:linear-gradient(90deg, transparent, rgba(217,142,59,0.9), transparent);
+    box-shadow:0 0 14px 2px rgba(217,142,59,0.55);
+    animation:scanMove 7s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes scanMove{
+    0%{top:-5%; opacity:0;}
+    6%{opacity:.85;}
+    48%{opacity:.85;}
+    58%{opacity:0;}
+    100%{top:105%; opacity:0;}
+  }
   .hero .wrap{position:relative; z-index:2; display:flex; gap:40px; align-items:center;}
   .hero-copy{flex:1 1 480px;}
   .hero-net{position:absolute; inset:0; z-index:1; opacity:0.5;}
-  .hero-dash{flex:0 1 420px; width:100%; max-width:420px; justify-self:end; filter:drop-shadow(0 20px 40px rgba(0,0,0,0.35));}
+  .hero-visual{position:relative; flex:0 1 420px; width:100%; max-width:420px; justify-self:end;}
+  .hero-dash{position:relative; z-index:2; width:100%; height:auto; display:block; filter:drop-shadow(0 0 28px rgba(217,142,59,0.16)) drop-shadow(0 20px 40px rgba(0,0,0,0.35)); animation:dashGlow 4s ease-in-out infinite;}
+  .service-carousel{position:absolute; top:-70px; right:-70px; bottom:-70px; left:-70px; z-index:1; display:flex; align-items:center; justify-content:center; pointer-events:none;}
+  .carousel-item{position:absolute; width:230px; height:230px; opacity:0; transition:opacity 1.4s ease;}
+  .carousel-item.active{opacity:0.16;}
+  @keyframes dashGlow{
+    0%,100%{filter:drop-shadow(0 0 20px rgba(217,142,59,0.14)) drop-shadow(0 20px 40px rgba(0,0,0,0.35));}
+    50%{filter:drop-shadow(0 0 34px rgba(217,142,59,0.26)) drop-shadow(0 20px 40px rgba(0,0,0,0.35));}
+  }
   .eyebrow{color:var(--amber-light); font-weight:600; letter-spacing:0.04em; margin:0 0 14px;}
   h1{font-size:clamp(2rem, 4.4vw, 3.1rem); line-height:1.15; margin:0 0 20px; max-width:18ch;}
   .lead{color:var(--muted); font-size:1.1rem; max-width:52ch; margin:0 0 34px;}
@@ -67,8 +108,8 @@
     font-weight:600; font-size:1rem; text-decoration:none;
     transition:transform .15s ease, box-shadow .15s ease;
   }
-  .btn-primary{background:var(--amber); color:var(--ink);}
-  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(217,142,59,0.28);}
+  .btn-primary{background:var(--amber); color:var(--ink); box-shadow:0 0 0 0 rgba(217,142,59,0.5);}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 0 26px 4px rgba(217,142,59,0.5);}
   .btn-ghost{border:1px solid rgba(244,239,230,0.28); color:var(--offwhite);}
   .btn-ghost:hover{border-color:var(--amber-light); color:var(--amber-light);}
 
@@ -139,7 +180,7 @@
     nav{display:none;}
     .hero{padding:52px 0 64px;}
     .hero .wrap{flex-direction:column;}
-    .hero-dash{display:none;}
+    .hero-visual{display:none;}
     section{padding:48px 0;}
   }
 
@@ -147,10 +188,16 @@
   .has-js .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;}
   .has-js .reveal.is-visible{opacity:1; transform:none;}
 
-  .card{transition:transform .2s ease, border-color .2s ease;}
-  .card:hover{transform:translateY(-4px); border-color:rgba(217,142,59,0.4);}
-  .card .dot{transition:background .2s ease, transform .2s ease;}
-  .card:hover .dot{background:rgba(217,142,59,0.28); transform:scale(1.08);}
+  .card{transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease; position:relative; overflow:hidden;}
+  .card::before{
+    content:""; position:absolute; top:0; left:-100%; width:100%; height:2px;
+    background:linear-gradient(90deg, transparent, var(--amber-light), transparent);
+    transition:left .6s ease;
+  }
+  .card:hover::before{left:100%;}
+  .card:hover{transform:translateY(-4px); border-color:rgba(217,142,59,0.4); box-shadow:0 0 24px rgba(217,142,59,0.16);}
+  .card .dot{transition:background .2s ease, transform .2s ease, box-shadow .2s ease;}
+  .card:hover .dot{background:rgba(217,142,59,0.28); transform:scale(1.08); box-shadow:0 0 14px 2px rgba(217,142,59,0.4);}
 
   .cases li{transition:transform .2s ease, border-color .2s ease;}
   .cases li:hover{transform:translateX(4px); border-color:rgba(217,142,59,0.35);}
@@ -176,6 +223,10 @@
     .chart-line{animation:none !important; stroke-dashoffset:0 !important;}
     .ring-fill{animation:none !important; stroke-dashoffset:31.7 !important;}
     .card:hover, .cases li:hover{transform:none;}
+    .scanline{animation:none !important; display:none !important;}
+    .hero-dash{animation:none !important;}
+    .carousel-item{transition:none !important;}
+    .cursor{animation:none !important;}
   }
 </style>
 </head>
@@ -204,6 +255,7 @@
 </header>
 
 <section class="hero">
+  <div class="scanline" aria-hidden="true"></div>
   <svg class="hero-net" viewBox="0 0 1024 500" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
     <g stroke="#D98E3B" stroke-width="2" opacity="0.18">
       <line x1="620" y1="70" x2="700" y2="130"/>
@@ -225,13 +277,25 @@
   </svg>
   <div class="wrap">
     <div class="hero-copy">
-    <p class="eyebrow">Soporte de TI · Lima, Perú</p>
+    <p class="eyebrow mono">Soporte de TI · Lima, Perú</p>
+    <p class="terminal-line mono"><span id="typeText"></span><span class="cursor">_</span></p>
     <h1>Tecnología confiable para que tu negocio nunca se detenga</h1>
     <p class="lead">Administramos la infraestructura tecnológica de tu empresa —servidores, redes, nube e inteligencia artificial— para que tú te enfoques en crecer, no en resolver problemas técnicos.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="https://wa.me/51923831311?text=Hola%2C%20quisiera%20informaci%C3%B3n%20sobre%20soporte%20de%20TI" target="_blank" rel="noopener">Escribir por WhatsApp</a>
       <a class="btn btn-ghost" href="#servicios">Ver servicios</a>
     </div>
+    </div>
+    <div class="hero-visual">
+    <div class="service-carousel" aria-hidden="true">
+      <svg class="carousel-item" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="6" rx="1.5" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="8" cy="8" r="1" fill="#F0B462"/><rect x="5" y="13" width="14" height="6" rx="1.5" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="8" cy="16" r="1" fill="#F0B462"/></svg>
+      <svg class="carousel-item" viewBox="0 0 24 24"><path d="M4 10a12 12 0 0 1 16 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><path d="M7 13.5a7.5 7.5 0 0 1 10 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><path d="M10 17a3.5 3.5 0 0 1 4 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="19.3" r="1.1" fill="#F0B462"/></svg>
+      <svg class="carousel-item" viewBox="0 0 24 24"><path d="M7 17a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.3 8 4.5 4.5 0 0 1 16 17H7Z" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linejoin="round"/><path d="M12.2 10.3l-.6 1.7 1.7-.2-1.9 2.6.5-1.7-1.6.2 1.9-2.6Z" fill="#F0B462"/></svg>
+      <svg class="carousel-item" viewBox="0 0 24 24"><polyline points="3,13 8,13 10,7 14,18 16,13 21,13" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="carousel-item" viewBox="0 0 24 24"><rect x="3" y="8" width="13" height="9" rx="2" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="9.5" cy="12.5" r="2.3" fill="none" stroke="#F0B462" stroke-width="1.6"/><path d="M16 11.5l5-2.5v8l-5-2.5" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      <svg class="carousel-item" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" fill="#F0B462"/><circle cx="19" cy="17" r="1.6" fill="#F0B462"/></svg>
+      <svg class="carousel-item" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 1 6 6c0 4-2 6-2 9" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-6 6c0 5 3 6 3 10" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M9 9a3 3 0 0 1 6 0c0 4 1.5 5 1.5 8.5" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M12 9v3.5c0 3 1.3 4 1.3 6.5" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <svg class="carousel-item" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#F0B462" stroke-width="1.6"/><ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="#F0B462" stroke-width="1.6"/><path d="M3 12h18M4.5 7.5h15M4.5 16.5h15" stroke="#F0B462" stroke-width="1.6"/></svg>
     </div>
     <svg class="hero-dash" viewBox="0 0 420 320" aria-hidden="true">
       <rect x="10" y="10" width="400" height="300" rx="20" fill="#1F3540" stroke="#D98E3B" stroke-opacity="0.35" stroke-width="1.5"/>
@@ -254,8 +318,9 @@
       <circle cx="350" cy="250" r="28" fill="none" stroke="#F4EFE6" stroke-opacity="0.15" stroke-width="8"/>
       <circle class="ring-fill" cx="350" cy="250" r="28" fill="none" stroke="#D98E3B" stroke-width="8" stroke-linecap="round"
               transform="rotate(-90 350 250)"/>
-      <text id="statPercent" x="350" y="255" text-anchor="middle" font-family="DejaVu Sans" font-size="18" font-weight="bold" fill="#F4EFE6">0%</text>
+      <text id="statPercent" class="mono" x="350" y="255" text-anchor="middle" font-size="18" font-weight="bold" fill="#F4EFE6">0%</text>
     </svg>
+    </div>
   </div>
 </section>
 
@@ -414,6 +479,35 @@ document.addEventListener('DOMContentLoaded', function(){
       if(progress < 1) requestAnimationFrame(step);
     }
     setTimeout(function(){ requestAnimationFrame(step); }, 300);
+  }
+
+  var carouselItems = document.querySelectorAll('.carousel-item');
+  if(carouselItems.length){
+    var cIdx = 0;
+    carouselItems[0].classList.add('active');
+    var reduceMotionCarousel = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!reduceMotionCarousel){
+      setInterval(function(){
+        carouselItems[cIdx].classList.remove('active');
+        cIdx = (cIdx + 1) % carouselItems.length;
+        carouselItems[cIdx].classList.add('active');
+      }, 2600);
+    }
+  }
+
+  var typeEl = document.getElementById('typeText');
+  if(typeEl){
+    var fullText = 'sistemas en línea · monitoreo activo 24/7';
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion){
+      typeEl.textContent = '> ' + fullText;
+    } else {
+      var i = 0;
+      (function typeChar(){
+        typeEl.textContent = '> ' + fullText.slice(0, i);
+        if(i <= fullText.length){ i++; setTimeout(typeChar, 32); }
+      })();
+    }
   }
 });
 </script>
