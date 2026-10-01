@@ -46,6 +46,19 @@
   nav a:hover{color:var(--amber-light);}
   .brand svg{filter:drop-shadow(0 0 6px rgba(217,142,59,0.55));}
 
+  .brand-suffix{position:relative; display:inline-block; width:0.62em; height:1em; vertical-align:top;}
+  .brand-suffix span{position:absolute; left:0; top:0; white-space:nowrap;}
+  .suffix-a{animation:cycleA 8s ease-in-out infinite;}
+  .suffix-ai{color:var(--amber); animation:cycleAI 8s ease-in-out infinite;}
+  .suffix-dot{animation:blink 1s step-start infinite;}
+  @keyframes cycleA{0%,40%{opacity:1;} 50%,90%{opacity:0;} 100%{opacity:1;}}
+  @keyframes cycleAI{0%,40%{opacity:0;} 50%,90%{opacity:1;} 100%{opacity:0;}}
+  @media (prefers-reduced-motion: reduce){
+    .suffix-a{animation:none !important; opacity:1 !important;}
+    .suffix-ai{animation:none !important; opacity:0 !important;}
+    .suffix-dot{animation:none !important;}
+  }
+
   .mono{font-family:ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;}
   .terminal-line{
     color:var(--amber-light); font-size:0.92rem; margin:0 0 16px; min-height:1.3em; letter-spacing:0.01em;
@@ -87,17 +100,25 @@
     100%{top:105%; opacity:0;}
   }
   .hero .wrap{position:relative; z-index:2; display:flex; gap:40px; align-items:center;}
-  .hero-copy{flex:1 1 480px;}
+  .hero-copy{flex:1 1 480px; position:relative;}
   .hero-net{position:absolute; inset:0; z-index:1; opacity:0.5;}
-  .hero-visual{position:relative; flex:0 1 420px; width:100%; max-width:420px; justify-self:end;}
-  .hero-dash{position:relative; z-index:2; width:100%; height:auto; display:block; filter:drop-shadow(0 0 28px rgba(217,142,59,0.16)) drop-shadow(0 20px 40px rgba(0,0,0,0.35)); animation:dashGlow 4s ease-in-out infinite;}
-  .service-carousel{position:absolute; top:-70px; right:-70px; bottom:-70px; left:-70px; z-index:1; display:flex; align-items:center; justify-content:center; pointer-events:none;}
-  .carousel-item{position:absolute; width:230px; height:230px; opacity:0; transition:opacity 1.4s ease;}
-  .carousel-item.active{opacity:0.16;}
-  @keyframes dashGlow{
-    0%,100%{filter:drop-shadow(0 0 20px rgba(217,142,59,0.14)) drop-shadow(0 20px 40px rgba(0,0,0,0.35));}
-    50%{filter:drop-shadow(0 0 34px rgba(217,142,59,0.26)) drop-shadow(0 20px 40px rgba(0,0,0,0.35));}
+  .hero-visual{position:relative; flex:0 1 540px; width:100%; max-width:540px; justify-self:end;}
+  .node-scene{width:100%; height:450px; perspective:900px;}
+  .node-plane{width:100%; height:100%; transform-style:preserve-3d; animation:tilt3d 13s ease-in-out infinite; overflow:visible;}
+  @keyframes tilt3d{
+    0%,100%{ transform:rotateY(-7deg) rotateX(4deg); }
+    50%{ transform:rotateY(7deg) rotateX(-4deg); }
   }
+  @keyframes nodeGlowPulse{0%,100%{opacity:0.75;} 50%{opacity:1;}}
+  @keyframes spinCW{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
+  @keyframes spinCCW{from{transform:rotate(0deg);} to{transform:rotate(-360deg);}}
+  @keyframes ambientPulse{0%,100%{opacity:0.5; transform:scale(1);} 50%{opacity:0.85; transform:scale(1.12);}}
+  @keyframes sweepRotate{0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);}}
+  .ring-outer{animation:spinCW 40s linear infinite; transform-origin:210px 150px;}
+  .ring-inner{animation:spinCCW 26s linear infinite; transform-origin:210px 150px;}
+  .constellation-node{animation:nodeGlowPulse 2.8s ease-in-out infinite;}
+  .ambient-glow{animation:ambientPulse 5s ease-in-out infinite; transform-origin:210px 150px;}
+  .specular-sweep{animation:sweepRotate 6s linear infinite; transform-origin:210px 150px;}
   .eyebrow{color:var(--amber-light); font-weight:600; letter-spacing:0.04em; margin:0 0 14px;}
   h1{font-size:clamp(2rem, 4.4vw, 3.1rem); line-height:1.15; margin:0 0 20px; max-width:18ch;}
   .lead{color:var(--muted); font-size:1.1rem; max-width:52ch; margin:0 0 34px;}
@@ -160,11 +181,14 @@
 
   footer{
     border-top:1px solid rgba(217,142,59,0.14);
-    padding:30px 0 calc(30px + env(safe-area-inset-bottom,0px));
+    padding:46px 0 calc(30px + env(safe-area-inset-bottom,0px));
     color:var(--muted); font-size:0.88rem;
   }
   footer .wrap{display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center;}
-  footer a{text-decoration:none; color:var(--amber-light);}
+  footer a{text-decoration:none; color:var(--muted); line-height:2.1;}
+  footer a:hover{color:var(--amber-light);}
+  .footer-grid{display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; align-items:start;}
+  @media (max-width:640px){ .footer-grid{grid-template-columns:1fr;} }
 
   .whatsapp-fab{
     position:fixed; right:20px; bottom: calc(20px + env(safe-area-inset-bottom,0px));
@@ -205,28 +229,105 @@
   @keyframes nodePulse{ 0%,100%{opacity:0.22;} 50%{opacity:0.6;} }
   .hero-net circle{animation:nodePulse 3.2s ease-in-out infinite;}
 
-  .chart-line{
-    stroke-dasharray:420; stroke-dashoffset:420;
-    animation:drawLine 1.6s ease forwards; animation-delay:.3s;
-  }
-  @keyframes drawLine{ to{ stroke-dashoffset:0; } }
-
-  .ring-fill{
-    stroke-dasharray:175.9; stroke-dashoffset:175.9;
-    animation:ringFill 1.6s ease forwards; animation-delay:.3s;
-  }
-  @keyframes ringFill{ to{ stroke-dashoffset:31.7; } }
-
   @media (prefers-reduced-motion: reduce){
     .has-js .reveal{opacity:1 !important; transform:none !important; transition:none !important;}
     .hero-net circle{animation:none !important;}
-    .chart-line{animation:none !important; stroke-dashoffset:0 !important;}
-    .ring-fill{animation:none !important; stroke-dashoffset:31.7 !important;}
     .card:hover, .cases li:hover{transform:none;}
     .scanline{animation:none !important; display:none !important;}
-    .hero-dash{animation:none !important;}
-    .carousel-item{transition:none !important;}
     .cursor{animation:none !important;}
+    .marquee-track{animation:none !important;}
+    .node-plane{animation:none !important; transform:none !important;}
+    .constellation-node{animation:none !important; opacity:1 !important;}
+    .ring-outer, .ring-inner, .ambient-glow, .specular-sweep{animation:none !important;}
+    .constellation-particle{display:none !important;}
+  }
+
+  /* --- estadísticas del hero --- */
+  .hero-stats{display:flex; flex-wrap:wrap; padding-top:28px; margin-top:28px; border-top:1px solid rgba(244,239,230,0.14);}
+  .hero-stats div{display:flex; flex-direction:column; gap:2px; margin-right:28px;}
+  .hero-stats strong{font-size:1.5rem; font-weight:800; color:var(--offwhite);}
+  .hero-stats span{font-size:0.78rem; color:var(--muted); letter-spacing:0.03em;}
+
+  /* --- marquee de stack --- */
+  .stack-wrap{overflow:hidden; -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);}
+  .marquee-track{display:flex; gap:14px; width:max-content; animation:marqueeScroll 32s linear infinite;}
+  .marquee-track:hover{animation-play-state:paused;}
+  @keyframes marqueeScroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .pill{
+    display:flex; align-items:center; gap:9px; flex-shrink:0;
+    background:var(--ink-light); border:1px solid rgba(217,142,59,0.18);
+    border-radius:100px; padding:10px 18px; font-size:0.9rem; white-space:nowrap;
+  }
+  .pill .pill-dot{width:7px; height:7px; border-radius:50%; background:var(--amber);}
+  .pill span{color:var(--muted); font-size:0.8rem;}
+
+  /* --- pilares --- */
+  .pillars{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:22px;}
+  .pillar{
+    background:var(--ink-light); border:1px solid rgba(217,142,59,0.14); border-radius:16px;
+    overflow:hidden; position:relative; transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .pillar:hover{transform:translateY(-4px); border-color:rgba(217,142,59,0.4); box-shadow:0 0 28px rgba(217,142,59,0.16);}
+  .pillar.featured{border-color:rgba(217,142,59,0.5); box-shadow:0 0 0 1px rgba(217,142,59,0.3), 0 0 28px rgba(217,142,59,0.14);}
+  .pillar-art{height:150px; background:#141F26; display:flex; align-items:center; justify-content:center; border-bottom:1px solid rgba(217,142,59,0.14); position:relative;}
+  .pillar-body{padding:24px;}
+  .pillar-tag{
+    position:absolute; top:14px; left:14px; font-size:0.68rem; font-weight:700; letter-spacing:0.05em;
+    color:var(--ink); background:var(--amber-light); padding:3px 10px; border-radius:100px;
+  }
+  .pillar .dot{
+    width:38px; height:38px; border-radius:50%; background:rgba(217,142,59,0.15);
+    display:flex; align-items:center; justify-content:center; margin:-43px 0 14px; position:relative; z-index:2;
+    border:3px solid var(--ink-light);
+  }
+  .pillar h3{margin:0 0 10px; font-size:1.15rem;}
+  .pillar p{margin:0; color:var(--muted); font-size:0.96rem;}
+
+  /* --- metodología --- */
+  .steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:20px;}
+  .step-card{
+    background:var(--ink-light); border:1px solid rgba(217,142,59,0.14); border-radius:14px; padding:22px;
+    position:relative; transition:transform .2s ease, border-color .2s ease;
+  }
+  .step-card:hover{transform:translateY(-4px); border-color:rgba(217,142,59,0.4);}
+  .step-num{position:absolute; top:18px; right:20px; font-size:0.85rem; color:var(--muted); font-weight:700;}
+  .step-art{height:70px; display:flex; align-items:center; margin-bottom:14px;}
+  .step-card h3{margin:0 0 8px; font-size:1.02rem;}
+  .step-card p{margin:0; color:var(--muted); font-size:0.92rem;}
+
+  /* --- FAQ --- */
+  .faq-layout{display:grid; grid-template-columns:260px 1fr; gap:40px;}
+  .faq-stats{display:flex; flex-direction:column; gap:22px;}
+  .faq-stats div{padding-bottom:18px; border-bottom:1px solid rgba(244,239,230,0.14);}
+  .faq-stats strong{display:block; font-size:1.7rem; font-weight:800; color:var(--amber-light);}
+  .faq-stats span{font-size:0.78rem; color:var(--muted); letter-spacing:0.02em;}
+  .faq-list{display:flex; flex-direction:column; gap:2px;}
+  .faq-item{border-bottom:1px solid rgba(244,239,230,0.14); padding:18px 0;}
+  .faq-item summary{
+    cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between;
+    font-weight:600; font-size:1rem; gap:16px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{
+    content:"+"; flex-shrink:0; width:28px; height:28px; border-radius:50%;
+    border:1px solid rgba(217,142,59,0.4); display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; color:var(--amber-light); transition:transform .25s ease;
+  }
+  .faq-item[open] summary::after{transform:rotate(45deg);}
+  .faq-item p{margin:12px 0 0; color:var(--muted); font-size:0.94rem; max-width:62ch;}
+
+  /* --- bloque CTA final --- */
+  .cta-band{background:var(--amber); border-radius:20px; padding:46px 40px; display:flex; flex-wrap:wrap; gap:28px; align-items:center; justify-content:space-between;}
+  .cta-band .eyebrow{color:rgba(22,35,43,0.7);}
+  .cta-band h2{color:var(--ink); max-width:16ch; font-size:1.8rem;}
+  .cta-band p{color:rgba(22,35,43,0.78); max-width:46ch; margin:0;}
+  .cta-band-copy{flex:1 1 360px;}
+  .cta-band .btn-primary{background:var(--ink); color:var(--offwhite);}
+  .cta-band .btn-primary:hover{box-shadow:0 0 26px 4px rgba(22,35,43,0.4);}
+  .cta-band-note{font-size:0.82rem; color:rgba(22,35,43,0.7); margin-top:10px;}
+
+  @media (max-width:760px){
+    .faq-layout{grid-template-columns:1fr;}
   }
 </style>
 </head>
@@ -244,10 +345,11 @@
         <circle cx="180" cy="320" r="30" fill="#F0B462"/>
         <circle cx="332" cy="320" r="30" fill="#F0B462"/>
       </svg>
-      <span>INFRONEXA<small>Redes y Sistemas</small></span>
+      <span>INFRONEX<span class="brand-suffix"><span class="suffix-a">A</span><span class="suffix-ai">AI<span class="suffix-dot">.</span></span></span><small>Redes y Sistemas</small></span>
     </div>
     <nav>
       <a href="#servicios">Servicios</a>
+      <a href="#proceso">Proceso</a>
       <a href="#experiencia">Experiencia</a>
       <a href="#contacto">Contacto</a>
     </nav>
@@ -255,7 +357,6 @@
 </header>
 
 <section class="hero">
-  <div class="scanline" aria-hidden="true"></div>
   <svg class="hero-net" viewBox="0 0 1024 500" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
     <g stroke="#D98E3B" stroke-width="2" opacity="0.18">
       <line x1="620" y1="70" x2="700" y2="130"/>
@@ -277,6 +378,7 @@
   </svg>
   <div class="wrap">
     <div class="hero-copy">
+    <div class="scanline" aria-hidden="true"></div>
     <p class="eyebrow mono">Soporte de TI · Lima, Perú</p>
     <p class="terminal-line mono"><span id="typeText"></span><span class="cursor">_</span></p>
     <h1>Tecnología confiable para que tu negocio nunca se detenga</h1>
@@ -285,49 +387,192 @@
       <a class="btn btn-primary" href="https://wa.me/51923831311?text=Hola%2C%20quisiera%20informaci%C3%B3n%20sobre%20soporte%20de%20TI" target="_blank" rel="noopener">Escribir por WhatsApp</a>
       <a class="btn btn-ghost" href="#servicios">Ver servicios</a>
     </div>
+    <div class="hero-stats reveal">
+      <div><strong>10+</strong><span>Años en TI</span></div>
+      <div><strong>8</strong><span>Servicios especializados</span></div>
+      <div><strong>100%</strong><span>Atención remota</span></div>
+    </div>
     </div>
     <div class="hero-visual">
-    <div class="service-carousel" aria-hidden="true">
-      <svg class="carousel-item" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="6" rx="1.5" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="8" cy="8" r="1" fill="#F0B462"/><rect x="5" y="13" width="14" height="6" rx="1.5" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="8" cy="16" r="1" fill="#F0B462"/></svg>
-      <svg class="carousel-item" viewBox="0 0 24 24"><path d="M4 10a12 12 0 0 1 16 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><path d="M7 13.5a7.5 7.5 0 0 1 10 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><path d="M10 17a3.5 3.5 0 0 1 4 0" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="19.3" r="1.1" fill="#F0B462"/></svg>
-      <svg class="carousel-item" viewBox="0 0 24 24"><path d="M7 17a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.3 8 4.5 4.5 0 0 1 16 17H7Z" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linejoin="round"/><path d="M12.2 10.3l-.6 1.7 1.7-.2-1.9 2.6.5-1.7-1.6.2 1.9-2.6Z" fill="#F0B462"/></svg>
-      <svg class="carousel-item" viewBox="0 0 24 24"><polyline points="3,13 8,13 10,7 14,18 16,13 21,13" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <svg class="carousel-item" viewBox="0 0 24 24"><rect x="3" y="8" width="13" height="9" rx="2" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="9.5" cy="12.5" r="2.3" fill="none" stroke="#F0B462" stroke-width="1.6"/><path d="M16 11.5l5-2.5v8l-5-2.5" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linejoin="round"/></svg>
-      <svg class="carousel-item" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" fill="#F0B462"/><circle cx="19" cy="17" r="1.6" fill="#F0B462"/></svg>
-      <svg class="carousel-item" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 1 6 6c0 4-2 6-2 9" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-6 6c0 5 3 6 3 10" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M9 9a3 3 0 0 1 6 0c0 4 1.5 5 1.5 8.5" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/><path d="M12 9v3.5c0 3 1.3 4 1.3 6.5" fill="none" stroke="#F0B462" stroke-width="1.5" stroke-linecap="round"/></svg>
-      <svg class="carousel-item" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#F0B462" stroke-width="1.6"/><ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="#F0B462" stroke-width="1.6"/><path d="M3 12h18M4.5 7.5h15M4.5 16.5h15" stroke="#F0B462" stroke-width="1.6"/></svg>
-    </div>
-    <svg class="hero-dash" viewBox="0 0 420 320" aria-hidden="true">
-      <rect x="10" y="10" width="400" height="300" rx="20" fill="#1F3540" stroke="#D98E3B" stroke-opacity="0.35" stroke-width="1.5"/>
-      <circle cx="34" cy="34" r="4" fill="#D98E3B"/>
-      <circle cx="48" cy="34" r="4" fill="#F0B462"/>
-      <circle cx="62" cy="34" r="4" fill="#F4EFE6" opacity="0.3"/>
-      <rect x="200" y="28" width="150" height="10" rx="5" fill="#F4EFE6" opacity="0.15"/>
-      <rect x="34" y="58" width="352" height="140" rx="10" fill="#16232B" opacity="0.55"/>
-      <polyline class="chart-line" points="52,178 100,150 148,168 196,118 244,140 292,92 340,112" fill="none" stroke="#D98E3B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <g fill="#F0B462">
-        <circle cx="52" cy="178" r="4"/><circle cx="100" cy="150" r="4"/><circle cx="148" cy="168" r="4"/>
-        <circle cx="196" cy="118" r="4"/><circle cx="244" cy="140" r="4"/><circle cx="292" cy="92" r="4"/><circle cx="340" cy="112" r="4"/>
+    <div class="node-scene">
+    <svg class="node-plane" viewBox="0 0 420 320" aria-hidden="true" style="overflow:visible;">
+      <defs>
+        <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#F0B462"/><stop offset="100%" stop-color="#D98E3B"/>
+        </radialGradient>
+        <radialGradient id="nodeGlow" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#F0B462"/><stop offset="100%" stop-color="#D98E3B" stop-opacity="0.7"/>
+        </radialGradient>
+        <radialGradient id="ambientGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#F0B462" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#F0B462" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="specularGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <circle class="ambient-glow" cx="210" cy="150" r="140" fill="url(#ambientGrad)"/>
+
+      <g class="ring-outer"><circle cx="210" cy="150" r="75" fill="none" stroke="#D98E3B" stroke-width="1" stroke-dasharray="2 8" opacity="0.45"/></g>
+      <g class="ring-inner"><circle cx="210" cy="150" r="55" fill="none" stroke="#F0B462" stroke-width="1" stroke-dasharray="1 6" opacity="0.4"/></g>
+
+      <g stroke="#D98E3B" stroke-width="1.4" stroke-dasharray="3 5" opacity="0.55">
+        <line x1="210" y1="150" x2="95" y2="70"/>
+        <line x1="210" y1="150" x2="325" y2="60"/>
+        <line x1="210" y1="150" x2="345" y2="190"/>
+        <line x1="210" y1="150" x2="255" y2="255"/>
+        <line x1="210" y1="150" x2="115" y2="245"/>
+        <line x1="210" y1="150" x2="55" y2="160"/>
+        <line x1="95" y1="70" x2="325" y2="60" opacity="0.5"/>
+        <line x1="345" y1="190" x2="255" y2="255" opacity="0.5"/>
+        <line x1="115" y1="245" x2="55" y2="160" opacity="0.5"/>
       </g>
-      <circle cx="52" cy="224" r="5" fill="#F0B462"/>
-      <rect x="68" y="219" width="150" height="9" rx="4.5" fill="#F4EFE6" opacity="0.18"/>
-      <circle cx="52" cy="250" r="5" fill="#D98E3B"/>
-      <rect x="68" y="245" width="110" height="9" rx="4.5" fill="#F4EFE6" opacity="0.18"/>
-      <circle cx="52" cy="276" r="5" fill="#F0B462"/>
-      <rect x="68" y="271" width="130" height="9" rx="4.5" fill="#F4EFE6" opacity="0.18"/>
-      <circle cx="350" cy="250" r="28" fill="none" stroke="#F4EFE6" stroke-opacity="0.15" stroke-width="8"/>
-      <circle class="ring-fill" cx="350" cy="250" r="28" fill="none" stroke="#D98E3B" stroke-width="8" stroke-linecap="round"
-              transform="rotate(-90 350 250)"/>
-      <text id="statPercent" class="mono" x="350" y="255" text-anchor="middle" font-size="18" font-weight="bold" fill="#F4EFE6">0%</text>
+
+      <g class="constellation-particle">
+        <circle r="3" fill="#F0B462" opacity="0.3"><animateMotion dur="2.4s" begin="-0.15s" repeatCount="indefinite" path="M210,150 L95,70"/></circle>
+        <circle r="4.5" fill="#F0B462"><animateMotion dur="2.4s" repeatCount="indefinite" path="M210,150 L95,70"/></circle>
+        <circle r="3" fill="#F0B462" opacity="0.3"><animateMotion dur="2.8s" begin="-0.2s" repeatCount="indefinite" path="M210,150 L325,60"/></circle>
+        <circle r="4.5" fill="#F0B462"><animateMotion dur="2.8s" repeatCount="indefinite" path="M210,150 L325,60"/></circle>
+        <circle r="3" fill="#F0B462" opacity="0.3"><animateMotion dur="2.6s" begin="-0.18s" repeatCount="indefinite" path="M210,150 L345,190"/></circle>
+        <circle r="4.5" fill="#F0B462"><animateMotion dur="2.6s" repeatCount="indefinite" path="M210,150 L345,190"/></circle>
+        <circle r="3" fill="#F0B462" opacity="0.3"><animateMotion dur="3s" begin="-0.22s" repeatCount="indefinite" path="M210,150 L255,255"/></circle>
+        <circle r="4.5" fill="#F0B462"><animateMotion dur="3s" repeatCount="indefinite" path="M210,150 L255,255"/></circle>
+        <circle r="3" fill="#F0B462" opacity="0.3"><animateMotion dur="2.5s" begin="-0.16s" repeatCount="indefinite" path="M210,150 L115,245"/></circle>
+        <circle r="4.5" fill="#F0B462"><animateMotion dur="2.5s" repeatCount="indefinite" path="M210,150 L115,245"/></circle>
+        <circle r="3" fill="#F0B462" opacity="0.3"><animateMotion dur="2.7s" begin="-0.2s" repeatCount="indefinite" path="M210,150 L55,160"/></circle>
+        <circle r="4.5" fill="#F0B462"><animateMotion dur="2.7s" repeatCount="indefinite" path="M210,150 L55,160"/></circle>
+      </g>
+
+      <circle cx="210" cy="150" r="34" fill="url(#coreGlow)" opacity="0.2"/>
+      <circle class="constellation-node" cx="210" cy="150" r="24" fill="none" stroke="#D98E3B" stroke-width="2"/>
+      <circle class="constellation-node" cx="210" cy="150" r="11" fill="url(#coreGlow)"/>
+      <g class="specular-sweep"><ellipse cx="210" cy="140" rx="6" ry="3" fill="url(#specularGrad)"/></g>
+
+      <circle class="constellation-node" cx="95" cy="70" r="14" fill="none" stroke="#D98E3B" stroke-width="1.8" style="animation-delay:.2s"/><circle cx="95" cy="70" r="6" fill="url(#nodeGlow)"/>
+      <circle class="constellation-node" cx="325" cy="60" r="11" fill="none" stroke="#D98E3B" stroke-width="1.8" style="animation-delay:.4s"/><circle cx="325" cy="60" r="4.5" fill="url(#nodeGlow)"/>
+      <circle class="constellation-node" cx="345" cy="190" r="14" fill="none" stroke="#D98E3B" stroke-width="1.8" style="animation-delay:.6s"/><circle cx="345" cy="190" r="6" fill="url(#nodeGlow)"/>
+      <circle class="constellation-node" cx="255" cy="255" r="11" fill="none" stroke="#D98E3B" stroke-width="1.8" style="animation-delay:.8s"/><circle cx="255" cy="255" r="4.5" fill="url(#nodeGlow)"/>
+      <circle class="constellation-node" cx="115" cy="245" r="14" fill="none" stroke="#D98E3B" stroke-width="1.8" style="animation-delay:1s"/><circle cx="115" cy="245" r="6" fill="url(#nodeGlow)"/>
+      <circle class="constellation-node" cx="55" cy="160" r="10" fill="none" stroke="#D98E3B" stroke-width="1.8" style="animation-delay:1.2s"/><circle cx="55" cy="160" r="4" fill="url(#nodeGlow)"/>
     </svg>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section id="stack" style="padding-bottom:0;">
+  <div class="wrap">
+    <p class="eyebrow" style="text-align:center;">Stack y herramientas</p>
+    <p class="section-lead" style="text-align:center; margin-left:auto; margin-right:auto;">Elijo la herramienta correcta para cada problema — incluyendo IA cuando acelera el resultado.</p>
+  </div>
+  <div class="stack-wrap">
+    <div class="marquee-track">
+      <span class="pill"><span class="pill-dot"></span>Windows Server <span>Sistemas</span></span>
+      <span class="pill"><span class="pill-dot"></span>Active Directory <span>Identidad</span></span>
+      <span class="pill"><span class="pill-dot"></span>Microsoft 365 <span>Nube</span></span>
+      <span class="pill"><span class="pill-dot"></span>Copilot <span>IA</span></span>
+      <span class="pill"><span class="pill-dot"></span>Claude <span>IA</span></span>
+      <span class="pill"><span class="pill-dot"></span>ChatGPT <span>IA</span></span>
+      <span class="pill"><span class="pill-dot"></span>Gemini <span>IA</span></span>
+      <span class="pill"><span class="pill-dot"></span>PowerShell <span>Automatización</span></span>
+      <span class="pill"><span class="pill-dot"></span>Zabbix <span>Monitoreo</span></span>
+      <span class="pill"><span class="pill-dot"></span>Fortinet <span>Seguridad</span></span>
+      <span class="pill"><span class="pill-dot"></span>Palo Alto <span>Seguridad</span></span>
+      <span class="pill"><span class="pill-dot"></span>Juniper <span>Redes</span></span>
+      <span class="pill"><span class="pill-dot"></span>Docker <span>Infra</span></span>
+      <span class="pill"><span class="pill-dot"></span>ONVIF <span>Videovigilancia</span></span>
+      <!-- duplicado para loop continuo -->
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Windows Server <span>Sistemas</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Active Directory <span>Identidad</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Microsoft 365 <span>Nube</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Copilot <span>IA</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Claude <span>IA</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>ChatGPT <span>IA</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Gemini <span>IA</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>PowerShell <span>Automatización</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Zabbix <span>Monitoreo</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Fortinet <span>Seguridad</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Palo Alto <span>Seguridad</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Juniper <span>Redes</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>Docker <span>Infra</span></span>
+      <span class="pill" aria-hidden="true"><span class="pill-dot"></span>ONVIF <span>Videovigilancia</span></span>
+    </div>
+  </div>
+</section>
+
+<section id="pilares">
+  <div class="wrap">
+    <h2>Lo que construimos para tu negocio</h2>
+    <p class="section-lead">Tres frentes de trabajo que definen cada proyecto — con IA como el que más estoy impulsando ahora mismo. <a href="#servicios" style="color:var(--amber-light); text-decoration:none;">Ver todos los servicios →</a></p>
+    <div class="pillars">
+      <div class="pillar reveal featured" style="transition-delay:0ms">
+        <div class="pillar-art">
+          <span class="pillar-tag">Lo más nuevo</span>
+          <svg width="90" height="90" viewBox="0 0 90 90">
+            <circle cx="45" cy="45" r="30" fill="none" stroke="#D98E3B" stroke-width="1" stroke-dasharray="3 5" opacity="0.5"/>
+            <path d="M45 20l5.5 15.5L66 41l-15.5 5.5L45 62l-5.5-15.5L24 41l15.5-5.5L45 20Z" fill="#F0B462"/>
+            <circle cx="72" cy="30" r="3" fill="#D98E3B"/>
+            <circle cx="16" cy="56" r="3" fill="#D98E3B"/>
+            <circle cx="70" cy="64" r="2.5" fill="#D98E3B"/>
+          </svg>
+        </div>
+        <div class="pillar-body">
+          <div class="dot">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" fill="#F0B462"/><circle cx="19" cy="17" r="1.6" fill="#F0B462"/></svg>
+          </div>
+          <h3>IA & Automatización</h3>
+          <p>Construyo herramientas y automatizaciones usando IA directamente — Copilot, Claude, ChatGPT y Gemini — para resolver tareas manuales repetitivas o problemas que antes requerían desarrollo tradicional. Desarrollo ágil, aplicado a lo que tu negocio necesita hoy.</p>
+        </div>
+      </div>
+      <div class="pillar reveal" style="transition-delay:90ms">
+        <div class="pillar-art">
+          <svg width="90" height="90" viewBox="0 0 90 90">
+            <circle cx="45" cy="45" r="8" fill="none" stroke="#D98E3B" stroke-width="2"/>
+            <circle cx="45" cy="45" r="3" fill="#F0B462"/>
+            <line x1="45" y1="10" x2="45" y2="33" stroke="#D98E3B" stroke-width="1.5" opacity="0.6"/>
+            <line x1="45" y1="57" x2="45" y2="80" stroke="#D98E3B" stroke-width="1.5" opacity="0.6"/>
+            <line x1="10" y1="45" x2="33" y2="45" stroke="#D98E3B" stroke-width="1.5" opacity="0.6"/>
+            <line x1="57" y1="45" x2="80" y2="45" stroke="#D98E3B" stroke-width="1.5" opacity="0.6"/>
+            <circle cx="45" cy="10" r="2.5" fill="#D98E3B"/><circle cx="45" cy="80" r="2.5" fill="#D98E3B"/>
+            <circle cx="10" cy="45" r="2.5" fill="#D98E3B"/><circle cx="80" cy="45" r="2.5" fill="#D98E3B"/>
+          </svg>
+        </div>
+        <div class="pillar-body">
+          <div class="dot">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="5" y="5" width="14" height="6" rx="1.5" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="8" cy="8" r="1" fill="#F0B462"/><rect x="5" y="13" width="14" height="6" rx="1.5" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="8" cy="16" r="1" fill="#F0B462"/></svg>
+          </div>
+          <h3>Infraestructura & Soporte</h3>
+          <p>Administración remota de servidores, redes, Microsoft 365 y monitoreo 24/7 — para que tu empresa opere sin interrupciones, sin necesidad de un área de TI propia.</p>
+        </div>
+      </div>
+      <div class="pillar reveal" style="transition-delay:180ms">
+        <div class="pillar-art">
+          <svg width="90" height="90" viewBox="0 0 90 90">
+            <rect x="26" y="34" width="38" height="26" rx="5" fill="none" stroke="#D98E3B" stroke-width="1.6"/>
+            <circle cx="40" cy="47" r="6.5" fill="none" stroke="#D98E3B" stroke-width="1.6"/>
+            <path d="M64 42l14-7v20l-14-7" fill="none" stroke="#D98E3B" stroke-width="1.6" stroke-linejoin="round"/>
+            <circle cx="40" cy="47" r="2" fill="#F0B462"/>
+            <path d="M45 20a10 10 0 0 1 10 10" fill="none" stroke="#D98E3B" stroke-width="1.4" stroke-dasharray="2 4" opacity="0.6"/>
+          </svg>
+        </div>
+        <div class="pillar-body">
+          <div class="dot">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="8" width="13" height="9" rx="2" fill="none" stroke="#F0B462" stroke-width="1.6"/><circle cx="9.5" cy="12.5" r="2.3" fill="none" stroke="#F0B462" stroke-width="1.6"/><path d="M16 11.5l5-2.5v8l-5-2.5" fill="none" stroke="#F0B462" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Seguridad & Presencia Digital</h3>
+          <p>Videovigilancia, control de acceso y presencia digital completa — dominio propio, correo profesional y perfiles optimizados para que tu negocio se vea real en internet.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="servicios">
   <div class="wrap">
-    <h2>Servicios</h2>
-    <p class="section-lead">Soluciones tecnológicas integrales para que tu pyme compita con la solidez de una gran empresa, sin el costo de un área de TI propia.</p>
+    <h2>Todos los servicios</h2>
+    <p class="section-lead">El detalle completo de cada frente de trabajo, uno por uno.</p>
     <div class="grid">
       <div class="card reveal" style="transition-delay:0ms">
         <div class="dot">
@@ -389,6 +634,48 @@
   </div>
 </section>
 
+<section id="proceso">
+  <div class="wrap">
+    <p class="eyebrow">Metodología</p>
+    <h2>Cómo trabajo</h2>
+    <p class="section-lead">Cuatro pasos simples, pensados para que sepas exactamente qué esperar desde el primer mensaje.</p>
+    <div class="steps">
+      <div class="step-card reveal" style="transition-delay:0ms">
+        <span class="step-num">01</span>
+        <div class="step-art">
+          <svg width="56" height="56" viewBox="0 0 56 56"><circle cx="24" cy="28" r="14" fill="none" stroke="#D98E3B" stroke-width="1.6"/><line x1="34" y1="38" x2="44" y2="48" stroke="#D98E3B" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="28" r="3" fill="#F0B462"/></svg>
+        </div>
+        <h3>Diagnóstico</h3>
+        <p>Revisamos tu infraestructura actual y conversamos qué necesitas resolver primero.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:90ms">
+        <span class="step-num">02</span>
+        <div class="step-art">
+          <svg width="56" height="56" viewBox="0 0 56 56"><rect x="8" y="10" width="16" height="10" rx="2" fill="none" stroke="#D98E3B" stroke-width="1.6"/><rect x="32" y="10" width="16" height="10" rx="2" fill="none" stroke="#D98E3B" stroke-width="1.6"/><rect x="20" y="36" width="16" height="10" rx="2" fill="none" stroke="#D98E3B" stroke-width="1.6"/><path d="M16 20v8h24v-8M28 28v8" fill="none" stroke="#D98E3B" stroke-width="1.4"/></svg>
+        </div>
+        <h3>Propuesta</h3>
+        <p>Te envío por WhatsApp qué incluye, qué no, y el costo — sin letra pequeña.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:180ms">
+        <span class="step-num">03</span>
+        <div class="step-art">
+          <svg width="56" height="56" viewBox="0 0 56 56"><rect x="8" y="12" width="40" height="30" rx="3" fill="none" stroke="#D98E3B" stroke-width="1.6"/><path d="M16 24l-5 4 5 4M26 24l5 4-5 4" fill="none" stroke="#F0B462" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Implementación</h3>
+        <p>Configuro, migro o automatizo según corresponda, documentando cada cambio.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:270ms">
+        <span class="step-num">04</span>
+        <div class="step-art">
+          <svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="4" fill="#F0B462"/><ellipse cx="28" cy="28" rx="20" ry="9" fill="none" stroke="#D98E3B" stroke-width="1.4" stroke-dasharray="2 4"/><circle cx="46" cy="22" r="2.5" fill="#D98E3B"/></svg>
+        </div>
+        <h3>Soporte continuo</h3>
+        <p>Acompañamiento remoto dentro de tu horario de atención, con ajustes cuando tu negocio crece.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="experiencia">
   <div class="wrap">
     <h2>Experiencia</h2>
@@ -418,8 +705,57 @@
   </div>
 </section>
 
+<section id="faq">
+  <div class="wrap">
+    <p class="eyebrow">Preguntas frecuentes</p>
+    <h2>Todo lo que quieres saber</h2>
+    <div class="faq-layout" style="margin-top:32px;">
+      <div class="faq-stats reveal">
+        <div><strong>100%</strong><span>ATENCIÓN REMOTA</span></div>
+        <div><strong>+10</strong><span>AÑOS DE EXPERIENCIA EN TI</span></div>
+        <div><strong>Directo</strong><span>SIN INTERMEDIARIOS NI CALL CENTER</span></div>
+      </div>
+      <div class="faq-list reveal" style="transition-delay:80ms">
+        <details class="faq-item">
+          <summary>¿Cómo empiezo a trabajar contigo?</summary>
+          <p>Escríbeme por WhatsApp, cuéntame qué necesitas y te respondo dentro de mi horario de atención con los siguientes pasos.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Atienden fuera de Lima?</summary>
+          <p>Sí. Todo el soporte es remoto, así que puedo atender pymes en cualquier parte del Perú.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Qué pasa si necesito algo presencial, como cámaras?</summary>
+          <p>Coordino con un instalador de confianza para el montaje físico; yo me encargo del diseño, la configuración y la puesta en marcha.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Cómo funciona el pago?</summary>
+          <p>Se acuerda un monto mensual según el servicio contratado, sin contratos largos ni letra pequeña.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Puedo pedir solo un proyecto puntual?</summary>
+          <p>Sí. También hago proyectos puntuales — migraciones, automatizaciones con IA, configuraciones — con cotización aparte, sin necesidad de un plan mensual.</p>
+        </details>
+        <details class="faq-item">
+          <summary>¿Trabajas con IA en proyectos a medida?</summary>
+          <p>Sí — uso Copilot, Claude, ChatGPT y Gemini para automatizar tareas y construir herramientas internas rápido y a bajo costo.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="contacto">
   <div class="wrap">
+    <div class="cta-band reveal" style="margin-bottom:56px;">
+      <div class="cta-band-copy">
+        <p class="eyebrow">¿Listo para empezar?</p>
+        <h2>Hablemos de lo que tu negocio necesita.</h2>
+        <p>Sin compromiso. Cuéntame tu situación y te respondo dentro de mi horario de atención con los siguientes pasos.</p>
+        <p class="cta-band-note">Horario: lunes a viernes 7-9pm · fines de semana 9am-7pm</p>
+      </div>
+      <a class="btn btn-primary" href="https://wa.me/51923831311?text=Hola%2C%20quisiera%20informaci%C3%B3n%20sobre%20soporte%20de%20TI" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    </div>
     <h2>Horario de atención</h2>
     <div class="hours-box">
       <div>
@@ -440,9 +776,34 @@
 </section>
 
 <footer>
-  <div class="wrap">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <div class="brand" style="margin-bottom:10px;">
+        <svg viewBox="0 0 512 512" aria-hidden="true" width="28" height="28">
+          <line x1="256" y1="150" x2="180" y2="320" stroke="#D98E3B" stroke-width="26" stroke-linecap="round"/>
+          <line x1="256" y1="150" x2="332" y2="320" stroke="#D98E3B" stroke-width="26" stroke-linecap="round"/>
+          <line x1="180" y1="320" x2="332" y2="320" stroke="#D98E3B" stroke-width="26" stroke-linecap="round"/>
+          <circle cx="256" cy="150" r="30" fill="#F0B462"/><circle cx="180" cy="320" r="30" fill="#F0B462"/><circle cx="332" cy="320" r="30" fill="#F0B462"/>
+        </svg>
+        <span style="font-size:1.1rem;">INFRONEXA<span class="brand-dot">.</span></span>
+      </div>
+      <p style="max-width:32ch; margin:0;">Administración remota de sistemas, redes e inteligencia artificial para pymes en Lima.</p>
+    </div>
+    <div>
+      <h4 style="color:var(--offwhite); font-size:0.95rem; margin:0 0 12px;">Navegación</h4>
+      <a href="#pilares">Servicios</a><br>
+      <a href="#proceso">Proceso</a><br>
+      <a href="#experiencia">Experiencia</a><br>
+      <a href="#faq">Preguntas frecuentes</a>
+    </div>
+    <div>
+      <h4 style="color:var(--offwhite); font-size:0.95rem; margin:0 0 12px;">Contacto</h4>
+      <a href="https://wa.me/51923831311">WhatsApp</a><br>
+      <a href="mailto:contacto@infronexa.com">contacto@infronexa.com</a>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:28px; padding-top:20px; border-top:1px solid rgba(244,239,230,0.1);">
     <span>© <span id="year"></span> Infronexa · Lima, Perú</span>
-    <a href="https://wa.me/51923831311" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
   </div>
 </footer>
 
@@ -467,32 +828,6 @@ document.addEventListener('DOMContentLoaded', function(){
     els.forEach(function(el){ obs.observe(el); });
   } else {
     els.forEach(function(el){ el.classList.add('is-visible'); });
-  }
-
-  var statEl = document.getElementById('statPercent');
-  if(statEl){
-    var target = 82, start = null;
-    function step(ts){
-      if(!start) start = ts;
-      var progress = Math.min((ts - start) / 1400, 1);
-      statEl.textContent = Math.round(progress * target) + '%';
-      if(progress < 1) requestAnimationFrame(step);
-    }
-    setTimeout(function(){ requestAnimationFrame(step); }, 300);
-  }
-
-  var carouselItems = document.querySelectorAll('.carousel-item');
-  if(carouselItems.length){
-    var cIdx = 0;
-    carouselItems[0].classList.add('active');
-    var reduceMotionCarousel = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(!reduceMotionCarousel){
-      setInterval(function(){
-        carouselItems[cIdx].classList.remove('active');
-        cIdx = (cIdx + 1) % carouselItems.length;
-        carouselItems[cIdx].classList.add('active');
-      }, 2600);
-    }
   }
 
   var typeEl = document.getElementById('typeText');
